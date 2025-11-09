@@ -15,11 +15,11 @@
     "commands": [
       {
         "command": "extension.sendToRepl",
-        "title": "Send Selection to REPL"
+        "title": "UREPL: Send Selection to REPL"
       },
       {
         "command": "extension.configureRepl",
-        "title": "Configure REPL for Language"
+        "title": "UREPL: Configure REPL for Language"
       }
     ],
     "keybindings": [
