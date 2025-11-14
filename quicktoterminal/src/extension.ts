@@ -7,9 +7,10 @@ export function activate(context: vscode.ExtensionContext) {
         if (!editor) return vscode.window.showErrorMessage('No active editor.');
 
         const selection = editor.selection;
-        const text = selection.isEmpty
+        var text = selection.isEmpty
             ? editor.document.lineAt(selection.start.line).text
             : editor.document.getText(selection);
+        text = text.trimEnd()
 
         const langId = editor.document.languageId;
         const terminalName = context.globalState.get<string>(`repl.${langId}.terminal`);
@@ -28,7 +29,22 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         terminal.show(true);
-        terminal.sendText(text, true);
+
+        const wsRegex = /(\s+).+/
+
+        const lines = text.split('\n')
+        const start = lines[0].match(wsRegex);
+        const end = lines[lines.length-1].match(wsRegex)
+
+        if (end) {
+            if (start) {
+                const [_, wsstart] = start
+                const [__, wsend] = end
+                if (wsstart.length < wsend.length) text+='\n\n'
+            } else if (end.length > 0) text +='\n\n'
+        }
+        
+        terminal.sendText(text, true)
     });
 
     const setCommand = vscode.commands.registerCommand('extension.configureRepl', async () => {
